@@ -15,7 +15,7 @@ public class EventStorage {
 	public synchronized void set() {
 		while (storage.size() == maxSize) {// 使用while防止假唤醒
 			try {
-				wait();
+				wait();// 执行之后将会释放锁
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
