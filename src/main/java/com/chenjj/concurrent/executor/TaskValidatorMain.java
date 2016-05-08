@@ -21,9 +21,9 @@ public class TaskValidatorMain {
 		taskList.add(dbTask);
 
 		ExecutorService executorService = Executors.newCachedThreadPool();
-		String result;
 		try {
-			result = executorService.invokeAny(taskList);
+			String result = executorService.invokeAny(taskList);
+			System.out.println(result);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
