@@ -52,11 +52,11 @@ import java.util.concurrent.TimeUnit;
  * 	，输出了大量的JVM指令，在这些指令中，你将发现monitor enter和monitor exit是成对出现的（有些时候会出现
  * 	一个monitor enter和多个monitor exit，但是每一个monitor exit之前必有相应的monitor enter）：
  * 	1、monitor enter
- * 	每个对象都与一个monitor关联，一个monitor的lock的锁只能被一个线程在同一时间获得，在一个线程尝试获得与对象关联
+ * 	每个对象都与一个monitor关联，一个monitor的lock只能被一个线程在同一时间获得，在一个线程尝试获得与对象关联
  * 	monitor的所有权时会发生如下几件事情：
  * 	a、如果monitor的计数器为0，则意味着该monitor的lock还没有被获得，某个线程获得之后就立即将该计数器加一，从此
  * 	该线程就是这个monitor的所有者了。
- * 	b、如果一个已经拥有改monitor所有权的线程重入，则会导致monitor计数器再次累加。
+ * 	b、如果一个已经拥有该monitor所有权的线程重入，则会导致monitor计数器再次累加。
  * 	c、如果monitor已经被其它线程所拥有， 则其它线程尝试获取该monitor的所有权时，会被陷入阻塞状态直到monitor计数器
  * 	变为0，才能再次尝试获取对monitor的所有权。
  * 	2、monitor exit
