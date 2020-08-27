@@ -1,6 +1,13 @@
 # concurrent
 1、JVM程序什么情况下会退出？
    在正常情况下，若JVM中没有了一个非守护线程，则JVM的进程会退出。当然System.exit()这种非正常情况也会退出。
+JVM进程退出的时候，所有线程都要退出。
+   如果是JVM进程 crash了（例如说发生了不可恢复的SIGSEGV），那这个进程肯定是彻底退出了，渣都不会剩。里面的线程自然也都要全部死掉。
+如果是被调用了System.exit(int) / Runtime.getRuntime().exit(int)，那么是Java程序主动要求彻底退出程序。
+这种情况下所有Java线程也要都退出。
+如果不是以上两种情况，则程序要跑到Java的入口方法main()结束后自然退出。
+这种情况下就有很多好玩的事情了。如果到主线程跑完入口方法main()的时候，系统中还存在其它non-daemon线程，
+那么JVM要一直等到这些non-daemon线程也跑完才结束。而如果剩下的都是daemon线程了，则JVM不会等待它们跑完而直接可以退出。
 
 2、yield 和 sleep 的异同
    yield 即 "谦让"，也是 Thread 类的方法。它让掉当前线程 CPU 的时间片，使正在运行中的线程重新变成就绪状态，
@@ -71,3 +78,31 @@ monitor enter成功之前都必须从主内存中获取数据，而不是从缓�
 9、synchronized的缺陷
    synchronized提供了一种排他式的数据同步机制，某个线程在获取monitor lock的时候可能会被阻塞，而这种阻塞有两个明显
 的缺陷：第一，无法控制阻塞时长，第二，阻塞不可被中断。
+
+10、ThreadGroup的interrupt
+    interrupt一个thread group会导致该group中所有的active线程都被interrupt，也就是说该group中每一个线程的interrupt
+标识都被设置了。
+
+11、ThreadGroup的destroy
+    destroy用于销毁ThreadGroup，该方法只是针对一个没有任何active线程的group进行一次destroy标记，调用该方法的直接
+结果是自己将从父group被移除。
+
+12、守护ThreadGroup
+    线程可以设置为守护线程，ThreadGroup也可以设置为守护ThreadGroup，但是若将一个ThreadGroup设置为deamon，也并不会
+影响线程的deamon属性，如果一个ThreadGroup的deamon被设置为true，那么在group中没有任何active线程的时候该group将自动
+destroy。
+
+13、获取线程运行时异常
+    线程在执行单元中是不允许抛出checked异常的，而且线程运行在自己的上下文中，派生它的线程将无法直接获得它运行中出现的
+异常信息。Java为我们提供了一个UncaughtExceptionHandler接口，当线程运行过程中出现异常时，会回调UncaughtExceptionHandler，，
+从而得知是哪个线程在运行时出错，以及出现了什么样的错误。
+
+14、Hook(钩子)线程
+    JVM进程的退出是由于JVM进程中没有了活跃的非守护线程，或者收到了系统的中断信号。向JVM程序注入一个Hook线程，在JVM退出的时候，
+Hook线程会启动执行，通过Runtime可以为JVM注入多个Hook线程。
+    Hook线程使用场景及注意事项：
+    a、Hook线程只有在接收到退出信号的时候会被执行，如果在kill的时候使用了参数-9，那么Hook线程不会得到执行，进程将会立即
+退出。
+    b、Hook线程中可以执行一些资源释放的工作，比如关闭文件句柄，socket链接，数据库connection等。
+    c、尽量不要在Hook线程中执行一些耗时非常长的操作，因为会导致程序迟迟不能退出。
+
