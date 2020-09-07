@@ -91,6 +91,7 @@ class类型。虽然SimpleClass和java.lang.String由不同的类加载器加载
 的class列表中维护了SimpleClass.class和String.class，因此SimpleClass是可以正常访问String的。
 
 10、类的卸载
+https://blog.csdn.net/xorxos/article/details/80490240
     JVM规定了一个Class只有在满足下面三个条件的时候才会被GC回收，也就是类被卸载。
     a、该类所有的实例都已经被GC。
     b、加载该类的ClassLoader实例被回收。
