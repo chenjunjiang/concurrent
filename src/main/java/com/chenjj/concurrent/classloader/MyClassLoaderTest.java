@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * 该方法就是我们自定义类加载器需要重写的方法。
  * 4、最后如果类被成功加载，则做一些性能数据的统计。
  * 5、由于loadClass方法参数指定了resolve为false，所以不会进行连接阶段的继续执行，这也就解释了为什么通过类加载器
- * 加载类并不会导致类的初始化。
+ * 加载类并不会导致类的初始化。即使resolve为true，也只是进入到连接阶段而已，还没进入到初始化阶段，所以不会导致类的初始化。
  * 根据以上分析，我们下边的自定义类加载器在没有删除HelloWorld.java的情况下，加载HelloWorld用到的是AppClassLoader，
  * 它是MyClassLoader的父加载器，它会加载idea编译后的classpath里面的HelloWorld.class，如果要让MyClassLoader
  * 加载HelloWorld.class，可以有以下方式：
@@ -29,9 +29,11 @@ public class MyClassLoaderTest {
         // MyClassLoader myClassLoader = new MyClassLoader("D:\\classloader", null);
         // 加载HelloWorld
         BrokerDelegateClassLoader myClassLoader = new BrokerDelegateClassLoader();
-        Class<?> clazz = myClassLoader.loadClass("com.chenjj.concurrent.classloader.HelloWorld");
+        //Class<?> clazz = myClassLoader.loadClass("com.chenjj.concurrent.classloader.HelloWorld");
+        Class<?> clazz = myClassLoader.loadClass("com.chenjj.concurrent.classloader.HelloWorld", true);
         System.out.println(clazz.getClassLoader());
         System.out.println(clazz.getClassLoader().getParent());
+        // 上面代码执行无论resolve为true或false都不会导致类的初始化；只有下面通过newInstance创建类的实例的时候才会导致类初始化
         Object helloWorld = clazz.newInstance();
         System.out.println(helloWorld);
         Method method = clazz.getMethod("welcome");
