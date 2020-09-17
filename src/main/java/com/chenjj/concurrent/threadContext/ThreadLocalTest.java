@@ -41,20 +41,29 @@ public class ThreadLocalTest {
         threadLocal.set(new byte[1024 * 1024 * 100]);
         threadLocal = null;
         TimeUnit.SECONDS.sleep(10);
+
+        System.gc();
+
         Thread t = Thread.currentThread();
         Class<? extends Thread> clazz = t.getClass();
         Field field = clazz.getDeclaredField("threadLocals");
         field.setAccessible(true);
         Object threadLocalMap = field.get(t);
         Class<?> tlmClass = threadLocalMap.getClass();
-        /**
-         * Method method=clazz.getDeclaredMethod(name);//可以调用类中的所有方法（不包括父类中继承的方法）
-         * Method method=clazz.getMethod(name);//可以调用类中有访问权限的方法（包括父类中继承的方法）
-         */
-        /*Method method = tlmClass.getDeclaredMethod("getEntry", ThreadLocal.class);
-        System.out.println(method);
-        method.setAccessible(true);
-        method.invoke(threadLocalMap, threadLocal);*/
+        Field tableField = tlmClass.getDeclaredField("table");
+        tableField.setAccessible(true);
+        Object[] arr = (Object[]) tableField.get(threadLocalMap);
+        for (Object o : arr) {
+            if (o != null) {
+                Class<?> entryClass = o.getClass();
+                Field valueField = entryClass.getDeclaredField("value");
+                Field referentField = entryClass.getSuperclass().getSuperclass().getDeclaredField("referent");
+                valueField.setAccessible(true);
+                referentField.setAccessible(true);
+                // 弱引用key: null, 值:[B@60e53b93
+                System.out.println(String.format("弱引用key: %s, 值:%s", referentField.get(o), valueField.get(o)));
+            }
+        }
         Thread.currentThread().join();
     }
 }
