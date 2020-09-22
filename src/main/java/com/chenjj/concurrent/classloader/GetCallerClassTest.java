@@ -23,8 +23,10 @@ public class GetCallerClassTest {
 
     public static void main(String[] args) throws ClassNotFoundException {
         // Class.forName("com.chenjj.concurrent.classloader.HelloWorld");
-        Class.forName("com.chenjj.concurrent.classloader.HelloWorld", false, GetCallerClassTest.class.getClassLoader());
+        // Class.forName("com.chenjj.concurrent.classloader.HelloWorld", false, GetCallerClassTest.class.getClassLoader());
         // test();
+        ClassLoader classLoader = GetCallerClassTest.class.getClassLoader();
+        classLoader.loadClass("com.chenjj.concurrent.classloader.HelloWorld");
     }
 
     public static void test() {

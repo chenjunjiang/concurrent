@@ -1,4 +1,4 @@
-# Class.forName 和 ClassLoader的区别
+# Class.forName 和 ClassLoader加载类的区别
   查看GetCallerClassTest和MyClassLoaderTest，通过两者的使用方式就能看出区别。
   还有这篇文章，通过mysql的jdbc driver讲解了为什么它必须使用Class.forName?
   https://mp.weixin.qq.com/s?__biz=MzI1NTI3MzEwMg==&mid=2247494433&idx=1&sn=2aea16ccb176343a22fa4961bcf6a2dd&chksm=ea3adac0dd4d53d61bccabe2281ef67b2c3cd39ded52a69761a49b868fb3452dd4167c31125f&mpshare=1&scene=24&srcid=0915TMCWMG8sxbV3KGtoJWLI&sharer_sharetime=1600130818613&sharer_shareid=58714c43bff8d32784ccc2cb555b2c13#rd

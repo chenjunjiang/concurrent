@@ -43,8 +43,12 @@ public class NameSpace {
         System.out.println(aClass2 == bClass2);// false
 
         System.out.println("==============================");
-        Class<?> clazz1 = classLoader3.loadClass("com.chenjj.concurrent.classloader.Student");
-        Class<?> clazz2 = classLoader4.loadClass("com.chenjj.concurrent.classloader.Student");
+
+        BrokerDelegateClassLoader classLoader6 = new BrokerDelegateClassLoader("D:\\classloader", null);
+        BrokerDelegateClassLoader classLoader7 = new BrokerDelegateClassLoader("D:\\classloader", null);
+        //Class<?> clazz1 = classLoader6.loadClass("com.chenjj.concurrent.classloader.Student");
+        Class<?> clazz1 = NameSpace.class.getClassLoader().loadClass("com.chenjj.concurrent.classloader.Student");
+        Class<?> clazz2 = classLoader7.loadClass("com.chenjj.concurrent.classloader.Student");
         System.out.println(clazz1 == clazz2);// false
         Object obj1 = clazz1.newInstance();
         Object obj2 = clazz2.newInstance();
@@ -53,8 +57,7 @@ public class NameSpace {
          * 执行的时候会抛出：
          * Caused by: java.lang.ClassCastException: com.chenjj.concurrent.classloader.Student cannot be cast to com.chenjj.concurrent.classloader.Student
          * 明明是同一类，而java却告诉我不能转换？这是为什么呢？
-         * 因为同一个类被不同的类加载器实例加载了，导致Student有两个不同的Class对象存在于内存中，在不同的命名空间中，
-         * 所有由这两个Class对象创建出的两个Student对象相互之间是不可见的，自然不能进行转换。
+         * 一个类被不同的类加载器或者是同一个类加载器的不同实例加载了，相互之间不能转换
          */
         method.invoke(obj1, obj2);
     }
