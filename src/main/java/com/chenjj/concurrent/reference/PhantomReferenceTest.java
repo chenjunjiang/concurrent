@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
  * 2、PhantomReference的get方法返回值始终是null
  * 3、当垃圾回收器决定回收PhantomReference关联的对象的时候，会将PhantomReference插入关联的ReferenceQueue中
  * 4、使用PhantomReference进行清理动作要比Object的finalize方法更加灵活
+ *
+ * phantomReference在放入队列之前会先调用Reference的tryHandlePending方法，该方法里面会进行入队操作
  */
 public class PhantomReferenceTest {
     public static void main(String[] args) throws InterruptedException {

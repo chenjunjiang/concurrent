@@ -11,8 +11,8 @@ public class Reference {
      *
      * @throws Throwable
      */
-    @Override
+    /*@Override
     protected void finalize() throws Throwable {
         System.out.println("the reference will be gc.");
-    }
+    }*/
 }
