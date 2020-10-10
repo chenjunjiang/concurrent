@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 对DynamicRouter的基本实现，适合在单线程下使用，因此不需要考虑线程安全问题
+ * 对DynamicRouter的基本实现，适合在单线程下使用。在多线程情况下，registerChannel方法会引起数据不一致的问题。
  */
 public class EventDispatcher implements DynamicRouter<Message> {
     // 用于保存Message和Channel之间的关系
