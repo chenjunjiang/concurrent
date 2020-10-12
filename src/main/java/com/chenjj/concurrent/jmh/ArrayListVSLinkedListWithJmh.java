@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 当我使用jmh的2.26版本(当时是最新)运行时，arrayListAdd方法会出现内存溢出的情况
+ */
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Thread)

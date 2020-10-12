@@ -140,3 +140,126 @@ ArrayListVSLinkedListWithJmh.linkedListAdd  avgt   10  0.213 ± 0.209  us/op</pr
 ## 四大BenchmarkMode
 > leftSide=`true`
 
+- NOTE
+<pre>JMH使用@BenchmarkMode这个注解来声明使用哪一种模式来运行，
+JMH为我们提供了四种运行模式，当然它还允许若干个模式同时存在，
+在我看来，Mode无非就是统计基准测试数据的不同方式和纬度口径。
+BenchmarkMode既可以在class上进行注解设置，也可以在基准方法上进行注解设置，
+方法中设置的模式将会覆盖class注解上的设置，同样，在Options中也可以进行设置，
+它将会覆盖所有基准方法上的设置。</pre>
+
+### AverageTime
+- NOTE
+<pre>AverageTime（平均响应时间）模式主要用于输出基准测试方法每调用一次所耗费的时间，
+也就是elapsedtime/operation。</pre>
+
+### Throughput
+- NOTE
+<pre>Throughput（方法吞吐量）则刚好与AverageTime相反，
+它的输出信息表明了在单位时间内可以对该方法调用多少次。</pre>
+
+### SampleTime
+- NOTE
+<pre>SampleTime（时间采样）的方式是指采用一种抽样的方式来统计基准测试方法的性能结果，
+与我们常见的Histogram图（直方图）几乎是一样的，它会收集所有的性能数据，
+并且将其分布在不同的区间中。</pre>
+
+### SingleShotTime
+- NOTE
+<pre>SingleShotTime主要可用来进行冷测试，不论是Warmup还是Measurement，
+在每一个批次中基准测试方法只会被执行一次，一般情况下，我们会将Warmup的批次设置为0。
+Single Shot Time也是采用Histogram的方式进行统计的。</pre>
+
+### 多Mode以及All
+- NOTE
+<pre>我们除了对某个基准测试方法设置上述四个模式中的一个之外，
+还可以为其设置多个模式的方式运行基准测试方法，如果你愿意，甚至可以设置全部的Mode。</pre>
+
+## OutputTimeUnit
+- NOTE
+<pre>OutputTimeUnit提供了统计结果输出时的时间单位，比如，调用一次该方法将会耗费多少个单位时间，
+或者在单位时间内对该方法进行了多少次的调用，同样，OutputTimeUnit既可以设置在class上，
+也可以设置在method上，还可以在Options中进行设置，它们的覆盖次序与BenchmarkMode一致</pre>
+
+## 三大State
+> leftSide=`true`
+
+- NOTE
+<pre>在JMH中，有三大State分别对应于Scope的三个枚举值。
+▪ Benchmark
+▪ Thread
+▪ Group
+这三个Scope是非常重要的State</pre>
+
+### Scope\.Thread
+- NOTE
+<pre>Thread独享的State
+所谓线程独享的State是指，每一个运行基准测试方法的线程都会持有一个独立的对象实例，
+该实例既可能是作为基准测试方法参数传入的，也可能是运行基准方法所在的宿主class，
+将State设置为Scope.Thread一般主要是针对非线程安全的类。</pre>
+
+### Scope\.Benchmark
+- NOTE
+<pre>Thread共享的State
+有时候，我们需要测试在多线程的情况下某个类被不同线程操作时的性能，
+比如，多线程访问某个共享数据时，我们需要让多个线程使用同一个实例才可以。
+因此JMH提供了多线程共享的一种状态Scope.Benchmark</pre>
+
+### Scope\.Group
+- NOTE
+<pre>线程组共享的State
+正常情况下，我们所编写的基准测试方法都会被JMH框架根据方法名的字典顺序排序后按照顺序逐个
+地调用执行，因此不存在两个方法同时运行的情况，
+如果想要测试某个共享数据或共享资源在多线程的情况下同时被读写的行为，是没有办法进行的，
+比如，在多线程高并发的环境中，多个线程同时对一个ConcurrentHashMap进行读写。
+通过上面这段文字可以简单地归纳出我们的诉求：
+第一，是在多线程情况下的单个实例；
+第二，允许一个以上的基准测试方法并发并行地运行。
+Scope.Group可以帮助我们实现这一点。</pre>
+
+## @Param
+- NOTE
+<pre>JMH为我们提供了一个@Param的注解，它使得参数可配置，
+也就是说一个参数在每一次的基准测试时都会有不同的值与之对应。</pre>
+
+## JMH的测试套件（Fixture）
+> leftSide=`true`
+
+
+### Setup以及TearDown
+- NOTE
+<pre>JMH提供了两个注解@Setup和@TearDown用于套件测试，
+其中@Setup会在每一个基准测试方法执行前被调用，通常用于资源的初始化，
+@TearDown则会在基准测试方法被执行之后被调用，通常可用于资源的回收清理工作</pre>
+
+### Level
+- NOTE
+<pre>在默认情况下，Setup和TearDown会在一个基准方法的所有批次执行前后分别执行，
+如果需要在每一个批次或者每一次基准方法调用执行的前后执行对应的套件方法，
+则需要通过Level对@Setup和@TearDown进行简单的配置：
+Level.Trail：Setup和TearDown默认的配置，该套件方法会在每一个基准测试方法的所有批次执行的前后被执行。
+Level.Iteration：由于我们可以设置Warmup和Measurement，
+因此每一个基准测试方法都会被执行若干个批次，
+如果想要在每一个批次执行的前后调用套件方法，则可以将Level设置为Iteration。
+Level.Invocation：将Level设置为Invocation意味着在每一个批次的度量(Measurement)过程中，
+每一次对基准方法的调用前后都会执行套件方法。
+需要注意的是，套件方法的执行也会产生CPU时间的消耗，
+但是JMH并不会将这部分时间纳入基准方法的统计之中，这一点更进一步地说明了JMH的严谨之处。</pre>
+
+## CompilerControl
+- NOTE
+<pre>做基准测试的时候可以通过CompilerControl来禁止JVM运行期动态编译和优化。
+如果你想在自己的应用程序中杜绝JVM运行期的优化，
+那么我们可以通过如下的方式来实现（虽然这种情况我们并不推荐）。
+▪ 通过编写程序的方式禁止JVM运行期动态编译和优化java.lang.Compiler.disable();
+▪ 在启动JVM时增加参数 -Djava.compiler=NONE。</pre>
+
+## 编写正确的微基准测试
+> leftSide=`true`
+
+- NOTE
+<pre>虽然JMH可以帮我们更好地了解我们所编写的代码，
+但是如果我们所编写的JMH基准测试方法本身就有问题，
+那么就会很难起到指导的作用，甚至还会可能会产生误导。</pre>
+
+### 避免DCE（Dead Code Elimination）
