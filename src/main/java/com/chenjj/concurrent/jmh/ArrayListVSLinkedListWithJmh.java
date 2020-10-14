@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 当我使用jmh的2.26版本(当时是最新)运行时，arrayListAdd方法会出现内存溢出的情况
+ * 执行时候如果出现内存溢出的情况，是因为JVM内存不足了，可以通过-Xms -Xmx 适当增加内存
  */
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
