@@ -358,3 +358,39 @@ Fork的引入也是考虑到了这个问题，虽然Java支持多线程，但是
 超时的基准测试数据将不会被纳入统计之中，这也是JMH的另外一个严谨之处。
 
 代码示例见：JMHBlocking和JMHTimeout。</pre>
+
+## JMH的Profiler\(分析器\)
+> leftSide=`true`
+
+- NOTE
+<pre>JMH提供了一些非常有用的Profiler可以帮助我们更加深入地了解基准测试，
+甚至还能帮助开发者分析所编写的代码。
+CL                     分析执行Beachmark方法时的类加载情况
+COMP              通过Standard MBean进行Beachmark方法的JIT编译器分析
+GC                    通过Standard MBean进行Beachmark方法的GC分析
+HS_CL              HotSpot类加载器通过特定于实现的MBean进行分析
+HS_COMP       HotSpot JIT通过特定于实现的MBean进行分析
+HS_GC             HotSpot 内存管理器(GC)通过特定于实现的MBean进行分析
+HS_RT             通过Implementation-Specific MBean进行 HotSpot 运行时分析
+HS_THR          通过Implementation-Specific MBean进行 HotSpot 线程分析
+STACK            JVM线程栈信息分析</pre>
+
+### StackProfiler
+- NOTE
+<pre>StackProfiler不仅可以输出线程堆栈的信息，还能统计程序在执行的过程中线程的状态，
+比如RUNNING状态、WAIT状态所占用的百分比等。</pre>
+
+### GcProfiler
+- NOTE
+<pre>GcProfiler可分析出在基准测试过程中，JVM每个内存空间上的GC情况。</pre>
+
+### ClassLoaderProfiler
+- NOTE
+<pre>ClassLoaderProfiler可以帮助我们看到在基准方法的执行过程中有多少类被加载和卸载，
+但是考虑到在一个类加载器中同一个类只会被加载一次的情况，因此我们需要将Warmup设置为0，
+以避免在热身阶段就已经加载了基准测试方法所需的所有类。</pre>
+
+### CompilerProfiler
+- NOTE
+<pre>CompilerProfiler将会告诉你在代码的执行过程中JIT编译器优化所花费的时间，
+我们可以打开verbose模式观察更详细的输出。</pre>

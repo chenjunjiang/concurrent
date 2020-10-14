@@ -15,6 +15,8 @@ import sun.reflect.Reflection;
  * ClassLoader.getClassLoader(caller)得到的类加载器就是AppClassLoader，由于initialize参数为true，
  * 所以通过Class.forName("xxx")这种方式加载类会导致类的初始化。
  * 当然如果使用Class.forName("xxx",false, classloader)的话是不会导致被加载类的初始化的。
+ * 注意：Class.forName("xxx",false, classloader)这种方式虽然可以指定自定义的类加载器，
+ * 它依然会遵守双亲委托机制，当父加载器都不能加载该类时，才会使用自定义加载器进行加载。
  */
 public class GetCallerClassTest {
     static {
