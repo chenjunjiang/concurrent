@@ -215,7 +215,9 @@ Single Shot Time也是采用Histogram的方式进行统计的。</pre>
 通过上面这段文字可以简单地归纳出我们的诉求：
 第一，是在多线程情况下的单个实例；
 第二，允许一个以上的基准测试方法并发并行地运行。
-Scope.Group可以帮助我们实现这一点。</pre>
+Scope.Group可以帮助我们实现这一点。例子见：JMHStateScopeGroup
+同一个线程组的线程才会共享一个对象实例，要保证多个基准测试方法同时运行，方法上修饰的线程组
+名称必须要一样。例子见：SynchronizedVsLockVsAtomicInteger</pre>
 
 ## @Param
 - NOTE
