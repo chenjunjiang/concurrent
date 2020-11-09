@@ -1,4 +1,4 @@
-package com.chenjj.concurrent.containers.blockqueue;
+package com.chenjj.concurrent.containers.blockQueue;
 
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;

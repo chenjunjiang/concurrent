@@ -1,4 +1,4 @@
-package com.chenjj.concurrent.containers.blockqueue;
+package com.chenjj.concurrent.containers.blockQueue;
 
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
