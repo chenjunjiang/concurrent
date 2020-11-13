@@ -200,6 +200,84 @@ JVM会为我们担保这一切，但是显式锁的使用则需要程序员自�
 
 </pre>
 
+### Lock的公平锁与非公平锁
+- NOTE
+<pre>lock锁分为两类：公平锁和非公平锁。按照本人的理解，公平锁指的是在多个线程同时获取锁时，
+会按照该线程的请求先后顺序来决定哪个线程优先获取到锁（即：根据同步队列中的线程顺序来决定），
+非公平锁则是自由竞争，和线程的等待时间无关。
+而且非公平锁可能出现一个线程连续获取锁的现象（原因是当一个线程请求锁时，
+只要获取了同步状态即成功获取锁。在这个前提下，刚释放的线程再次获取同步状态的几率非常大）。
+
+package com.zhl.practice;
+
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @author Holley
+ * @Description 公平锁与非公平锁的演示
+ * @create 2019-05-16 10:16
+ **/
+public class LockTest {
+
+    private static ReenTrantLock2 fairLock = new ReenTrantLock2(true);
+
+    private static ReenTrantLock2 nonfairLock = new ReenTrantLock2(false);
+
+    @Test
+    public void fair(){
+        testLock(fairLock);
+    }
+
+    @Test
+    public void unfair(){
+        testLock(nonfairLock);
+    }
+
+    private void testLock(ReenTrantLock2 lock){
+        for(int i = 0; i&lt;5;i++){
+            Job job = new Job(lock);
+            job.start();
+        }
+    }
+
+    private static class Job extends Thread{
+
+        private ReenTrantLock2 lock;
+
+        public Job(ReenTrantLock2 lock){
+            this.lock = lock;
+        }
+
+        @Override
+        public void run() {
+            lock.lock();
+            System.out.println(&quot;当前线程：&quot; + this.getName() + &quot;等待线程：&quot; + lock.getQueuedThreads().toString());
+            lock.unlock();
+            lock.lock();
+            System.out.println(&quot;当前线程：&quot; + this.getName() + &quot;等待线程：&quot; + lock.getQueuedThreads().toString());
+            lock.unlock();
+        }
+    }
+    private static class ReenTrantLock2 extends ReentrantLock{
+        public ReenTrantLock2(Boolean flag){
+            super(flag);
+        }
+
+        public Collection&lt;Thread&gt; getQueuedThreads(){
+//            System.out.println(super.getQueuedThreads());
+            List&lt;Thread&gt; list = new ArrayList&lt;&gt;(super.getQueuedThreads());
+            return list;
+        }
+    }
+
+}
+</pre>
+
 ## ReadWriteLock&ReentrantReadWriteLock
 > leftSide=`true`
 
