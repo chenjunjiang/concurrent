@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Don't forget to set system property
+-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+     to make all loggers asynchronous. -->
+
+<Configuration status="WARN" moniterInterval="86400">
+    <!-- 定义常量 -->
+    <properties>
+        <property name="APP_NAME">concurrent</property>
+        <property name="LOG_FILE_PREFIX">metrics</property>
+        <property name="LOG_HOME">${sys:user.home}/logs/${APP_NAME}</property>
+    </properties>
+    <Appenders>
+        <!--这个输出控制台的配置-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yy-MM-dd.HH:mm:ss.SSS} [%-16t] %-5p %-22c{1} - %m%n"/>
+        </Console>
+
+        <!--信息输出到文件，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用-->
+        <File name="Metrics" fileName="metrics.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <logger name="com.chenjj.concurrent.metrics" level="INFO" additivity="false">
+            <appender-ref ref="Metrics"/>
+        </logger>
+
+        <!--这里如果在Linux下设置为debug,netty会报错:https://github.com/netty/netty/issues/7319-->
+        <root level="DEBUG" includeLocation="true">
+            <appender-ref ref="Console"/>
+        </root>
+    </Loggers>
+
+</Configuration>
