@@ -473,3 +473,29 @@ TCP服务端口无法响应等问题，而借助于RateLimiter就可以很好地
 这个方法和parkNanos（Object blocker, long nanos）方法的区别是，
 后者是从当前算等待nanos秒时间，而前者是指定一个时间点，比如需要等到2017.12.11日12:00:00，
 则把这个时间点转换为从1970年到这个时间点的总毫秒数。</pre>
+
+## AbstractQueuedSynchronizer\(AQS\)
+- NOTE
+<pre>https://mp.weixin.qq.com/s/ae60O68UofpuO0Cq5OEnNA
+
+所谓的AQS即是抽象的队列式的同步器，内部定义了很多锁相关的方法，我们熟知的ReentrantLock、
+ReentrantReadWriteLock、CountDownLatch、Semaphore等都是基于AQS来实现的。
+
+AQS实现原理
+AQS中 维护了一个volatile int state（代表共享资源）和一个FIFO线程等待队列（多线程争用资源被
+阻塞时会进入此队列）。
+这里volatile能够保证多线程下的可见性，当state=1则代表当前对象锁已经被占有，其他线程来加锁
+时则会失败，加锁失败的线程会被放入一个FIFO的等待队列中，并且会被UNSAFE.park()操作挂起，
+等待其他获取锁的线程释放锁才能够被唤醒。
+另外state的操作都是通过CAS来保证其并发修改的安全性。
+</pre>
+
+### 场景分析
+- NOTE
+<pre>模拟多线程竞争锁、释放锁的场景来进行分析AQS源码：
+三个线程(线程一、线程二、线程三)同时来加锁/释放锁
+1、线程一加锁成功时AQS内部实现
+2、线程二/三加锁失败时AQS中等待队列的数据模型
+3、线程一释放锁及线程二获取锁实现原理
+4、通过线程场景来讲解公平锁具体实现原理
+5、通过线程场景来讲解Condition中await()和signal()实现原理</pre>
