@@ -25,7 +25,7 @@ public class Singleton4 {
     private Singleton4() {
     }
 
-    public static synchronized Singleton4 getInstance() {
+    public static Singleton4 getInstance() {
         // 当instance为null时，才进入同步代码块，不为null直接就返回了，不需要每次进来都加锁，提高了效率
         if (instance == null) {
             // 可能多个线程同时执行到这里，所以必须再次判null
