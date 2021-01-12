@@ -68,6 +68,9 @@ public class FalseShareTest implements Runnable {
         }
     }
 
+    /**
+     * 64 位系统超过缓存行的 64 字节也无所谓，只要保证不同线程不操作同一缓存行就可以
+     */
     public final static class VolatileLong {
         public volatile long value = 0L;
         // 缓存行填充（Padding）
