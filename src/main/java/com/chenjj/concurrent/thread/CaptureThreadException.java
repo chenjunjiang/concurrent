@@ -31,8 +31,8 @@ public class CaptureThreadException {
 
         // 设置thread的UncaughtExceptionHandler，只对thread有效
         thread.setUncaughtExceptionHandler((t, e) -> {
-            System.out.println("current thread:" + Thread.currentThread()); // main线程
-            System.out.println(t.getName() + " occur exception");
+            System.out.println("current thread:" + Thread.currentThread().getName()); // Test-Thread
+            System.out.println(t.getName() + " occur exception"); // Test-Thread
         });
         thread.start();
 
